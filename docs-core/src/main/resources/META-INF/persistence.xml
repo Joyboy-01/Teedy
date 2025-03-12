@@ -4,6 +4,9 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
   <persistence-unit name="transactions-optional" transaction-type="RESOURCE_LOCAL">
+    <!-- 使用 Hibernate 作为 JPA 提供者 -->
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    
+    <properties></properties> 
   </persistence-unit>
 </persistence>
