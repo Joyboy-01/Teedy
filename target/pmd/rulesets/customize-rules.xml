@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Teedy Custom PMD Ruleset">
+    <description>
+        Custom PMD ruleset for Teedy with rules related to Lines of Code (LoC),
+        Cyclomatic Complexity (CC), Weighted Methods per Class (WMC), Coupling Between Objects (CBO),
+        and Lack of Cohesion in Methods (LCOM).
+    </description>
+
+    <!-- Lines of Code (LoC) - Max 100 lines per class -->
+    <rule ref="category/java/design.xml/TooManyMethods"></rule>
+
+    <!-- Cyclomatic Complexity (CC) - Max complexity of 10 -->
+    <rule ref="category/java/design.xml/CyclomaticComplexity"></rule>
+
+
+    <!-- Coupling Between Objects (CBO) - Max 10 dependent classes -->
+    <rule ref="category/java/design.xml/CouplingBetweenObjects"></rule>
+
+    <!-- Lack of Cohesion in Methods (LCOM) - Max 5 lack of cohesion -->
+    <!-- Weighted Methods per Class (WMC) - Max 20 weighted methods per class -->
+    <rule ref="category/java/design.xml/GodClass"></rule>
+</ruleset>
