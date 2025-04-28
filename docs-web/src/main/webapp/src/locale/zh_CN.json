@@ -97,6 +97,12 @@
       "workflow_comment": "添加工作流程评论",
       "workflow_validated_title": "工作流程步骤已验证",
       "workflow_validated_message": "工作流程步骤已成功验证。",
+      "translate": "翻译",
+      "restore_original": "恢复原文",
+      "currently_showing": "已翻译为：{{lang}}",
+      "translating": "正在翻译文档...",
+      "translation_error_title": "翻译错误",
+      "translation_error_message": "翻译文档时发生错误。请稍后重试。",
       "content": {
         "content": "内容",
         "delete_file_title": "删除文档",

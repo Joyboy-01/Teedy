@@ -107,6 +107,12 @@
       "workflow_comment": "Add a workflow comment",
       "workflow_validated_title": "Workflow step validated",
       "workflow_validated_message": "The workflow step has been successfully validated.",
+      "translate": "Translate",
+      "restore_original": "Restore original",
+      "currently_showing": "Translated to: {{lang}}",
+      "translating": "Translating document...",
+      "translation_error_title": "Translation Error",
+      "translation_error_message": "An error occurred while translating the document. Please try again later.",
       "content": {
         "content": "Content",
         "delete_file_title": "Delete file",

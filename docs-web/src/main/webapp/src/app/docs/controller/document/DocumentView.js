@@ -164,4 +164,62 @@ angular.module('docs').controller('DocumentView', function ($scope, $rootScope, 
       }
     });
   };
+  /**
+   * 支持的翻译语言列表
+   */
+  $scope.supportedLanguages = [
+    {code: 'en', name: 'English'},
+    {code: 'zh', name: '中文'},
+    {code: 'fr', name: 'Français'},
+    {code: 'es', name: 'Español'},
+    {code: 'de', name: 'Deutsch'},
+    {code: 'ja', name: '日本語'},
+    {code: 'ko', name: '한국어'},
+    {code: 'ru', name: 'Русский'}
+  ];
+  
+  /**
+   * 翻译文档内容
+   */
+  $scope.translateContent = function(targetLanguage) {
+    if (!$scope.document || !$scope.document.content) {
+      return;
+    }
+    
+    // 保存原始内容（如果还未保存）
+    if (!$scope.originalContent) {
+      $scope.originalContent = $scope.document.content;
+    }
+    
+    // 显示加载状态
+    $scope.isTranslating = true;
+    
+    // 调用翻译API
+    Restangular.one('translation', targetLanguage).customPOST({
+      text: $scope.document.content
+    }).then(function(data) {
+      // 更新文档内容为翻译后的内容
+      $scope.document.content = data.translated;
+      $scope.currentLanguage = targetLanguage;
+      $scope.isTranslated = true;
+      $scope.isTranslating = false;
+    }, function(response) {
+      $scope.isTranslating = false;
+      var title = $translate.instant('document.view.translation_error_title');
+      var msg = $translate.instant('document.view.translation_error_message');
+      var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+      $dialog.messageBox(title, msg, btns);
+    });
+  };
+  
+  /**
+   * 恢复原始文档内容
+   */
+  $scope.restoreOriginal = function() {
+    if ($scope.originalContent) {
+      $scope.document.content = $scope.originalContent;
+      $scope.isTranslated = false;
+      $scope.currentLanguage = null;
+    }
+  };
 });

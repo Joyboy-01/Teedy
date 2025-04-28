@@ -1,3 +1,38 @@
+<!-- 在文件内容显示区域上方添加翻译按钮 -->
+<div class="modal-header">
+  <h3>{{ file.name }} <small>v{{ file.version + 1 }}.0</small></h3>
+  
+  <!-- 添加翻译按钮 -->
+  <div class="btn-group" ng-if="file.content">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      <span class="glyphicon glyphicon-globe"></span> 
+      {{ 'document.view.translate' | translate }} 
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li ng-repeat="lang in supportedLanguages">
+        <a href ng-click="translateContent(lang.code)">{{lang.name}}</a>
+      </li>
+      <li role="separator" class="divider" ng-if="isTranslated"></li>
+      <li ng-if="isTranslated">
+        <a href ng-click="restoreOriginal()">
+          <span class="glyphicon glyphicon-repeat"></span> {{ 'document.view.restore_original' | translate }}
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+  <!-- 翻译状态提示 -->
+  <div class="alert alert-info" ng-if="isTranslating">
+    <span class="glyphicon glyphicon-refresh"></span> {{ 'document.view.translating' | translate }}
+  </div>
+  
+  <div class="small text-muted" ng-if="isTranslated">
+    {{ 'document.view.currently_showing' | translate:{ lang: currentLanguage | uppercase } }}
+    <a href ng-click="restoreOriginal()">{{ 'document.view.restore_original' | translate }}</a>
+  </div>
+</div>
+
 <div class="text-center">
   <div class="btn-group pull-left">
     <button type="button" class="btn btn-default" ng-click="closeFile()">
