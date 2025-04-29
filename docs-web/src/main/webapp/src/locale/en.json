@@ -113,6 +113,7 @@
       "translating": "Translating document...",
       "translation_error_title": "Translation Error",
       "translation_error_message": "An error occurred while translating the document. Please try again later.",
+      "select_language": "select translate language",
       "content": {
         "content": "Content",
         "delete_file_title": "Delete file",

@@ -1,12 +1,11 @@
-<!-- 在文件内容显示区域上方添加翻译按钮 -->
 <div class="modal-header">
   <h3>{{ file.name }} <small>v{{ file.version + 1 }}.0</small></h3>
   
-  <!-- 添加翻译按钮 -->
-  <div class="btn-group" ng-if="file.content">
+  <!-- 翻译按钮 -->
+  <div class="btn-group" ng-if="true">
     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
       <span class="glyphicon glyphicon-globe"></span> 
-      {{ 'document.view.translate' | translate }} 
+      翻译
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu">
@@ -16,7 +15,7 @@
       <li role="separator" class="divider" ng-if="isTranslated"></li>
       <li ng-if="isTranslated">
         <a href ng-click="restoreOriginal()">
-          <span class="glyphicon glyphicon-repeat"></span> {{ 'document.view.restore_original' | translate }}
+          <span class="glyphicon glyphicon-repeat"></span> 恢复原文
         </a>
       </li>
     </ul>
@@ -24,12 +23,18 @@
   
   <!-- 翻译状态提示 -->
   <div class="alert alert-info" ng-if="isTranslating">
-    <span class="glyphicon glyphicon-refresh"></span> {{ 'document.view.translating' | translate }}
+    <span class="glyphicon glyphicon-refresh"></span> 正在翻译...
   </div>
-  
-  <div class="small text-muted" ng-if="isTranslated">
-    {{ 'document.view.currently_showing' | translate:{ lang: currentLanguage | uppercase } }}
-    <a href ng-click="restoreOriginal()">{{ 'document.view.restore_original' | translate }}</a>
+</div>
+
+<!-- 添加翻译结果面板 -->
+<div class="panel panel-default" ng-if="showTranslatedPanel">
+  <div class="panel-heading">
+    翻译内容 ({{currentLanguage | uppercase}})
+    <button type="button" class="close" ng-click="restoreOriginal()">&times;</button>
+  </div>
+  <div class="panel-body">
+    <pre>{{translatedContent}}</pre>
   </div>
 </div>
 
@@ -44,12 +49,12 @@
     <button type="button" class="btn btn-default"
             ng-style="{ 'visibility': previousFile() ? 'visible' : 'hidden' }"
             ng-click="goPreviousFile()">
-      {{ 'file.view.previous' | translate }}
+      上一个
     </button>
     <button type="button" class="btn btn-default"
             ng-style="{ 'visibility': nextFile() ? 'visible' : 'hidden' }"
             ng-click="goNextFile()">
-      {{ 'file.view.next' | translate }}
+      下一个
     </button>
     <button type="button" class="btn btn-placeholder" style="visibility: hidden">
       &nbsp;
@@ -66,17 +71,30 @@
     <button type="button" class="btn btn-default" uib-tooltip="Show text content" tooltip-append-to-body="true" ng-click="openFileContent()">
       <span class="fas fa-eye"></span>
     </button>
+    
+    <!-- 添加提取并翻译按钮 -->
+    <div class="btn-group" uib-dropdown>
+      <button type="button" class="btn btn-default" uib-dropdown-toggle uib-tooltip="在新窗口中翻译" tooltip-append-to-body="true">
+        <span class="glyphicon glyphicon-globe"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu>
+        <li class="dropdown-header">选择翻译语言</li>
+        <li ng-repeat="lang in supportedLanguages">
+          <a href ng-click="extractAndTranslate(lang.code)">{{lang.name}}</a>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 
 <div class="text-center" style="position: relative;" ng-if="$stateParams.fileId">
-  <!-- Standard preview -->
+  <!-- 图片预览 -->
   <img ng-src="../api/file/{{ $stateParams.fileId }}/data?size=web"
        ng-init="error = false"
        img-error="error = true"
-       ng-show="!error && canDisplayPreview()" />
+       ng-show="!error && canDisplayPreview() && file.mimetype.indexOf('image/') === 0" />
 
-  <!-- Media player -->
+  <!-- 媒体播放器 -->
   <a href class="video-overlay" ng-if="!error && (file.mimetype.substring(0, 6) == 'video/' || file.mimetype.substring(0, 6) == 'audio/')"
      ng-init="videoPlayer = false" ng-click="videoPlayer = true">
     <span class="fas fa-play-circle" ng-if="!videoPlayer"></span>
@@ -84,12 +102,21 @@
            controls="controls" ng-src="../api/file/{{ $stateParams.fileId }}/data"></video>
   </a>
 
-  <!-- PDF viewer -->
+  <!-- PDF查看器 -->
   <iframe ng-src="{{ trustedFileUrl }}" class="pdf-viewer" scrolling="yes" ng-if="!error && file.mimetype == 'application/pdf'"></iframe>
 
-  <!-- File not found -->
+  <!-- 文本文件预览 -->
+  <div class="text-preview" ng-if="!error && isTextFile(file.mimetype)">
+    <div class="well" ng-if="!fileContent">
+      <i class="fas fa-spinner fa-spin"></i>
+      正在加载文件内容...
+    </div>
+    <pre ng-if="fileContent" class="text-content">{{fileContent}}</pre>
+  </div>
+  
+  <!-- 文件未找到 -->
   <p class="well-lg" ng-show="error">
     <span class="fas fa-exclamation-triangle"></span>
-    {{ 'file.view.not_found' | translate }}
+    文件未找到或无法显示
   </p>
 </div>

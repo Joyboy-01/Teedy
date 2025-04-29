@@ -3,8 +3,7 @@
 /**
  * File view controller.
  */
-angular.module('docs').controller('FileModalView', function($scope, $state, $stateParams, $q, $dialog, $timeout, 
-  $http, Restangular, $translate, Upload) {
+angular.module('docs').controller('FileView', function($uibModal, $state, $stateParams, $timeout) {
   var modal = $uibModal.open({
     windowClass: 'modal modal-fileview',
     templateUrl: 'partial/docs/file.view.html',
@@ -26,60 +25,4 @@ angular.module('docs').controller('FileModalView', function($scope, $state, $sta
       }
     });
   });
-  $scope.supportedLanguages = [
-    {code: 'en', name: 'English'},
-    {code: 'zh', name: '中文'},
-    {code: 'fr', name: 'Français'},
-    {code: 'es', name: 'Español'},
-    {code: 'de', name: 'Deutsch'},
-    {code: 'ja', name: '日本語'},
-    {code: 'ko', name: '한国어'},
-    {code: 'ru', name: 'Русский'}
-  ];
-  /**
-   * 翻译文件内容
-   */
-  $scope.translateContent = function(targetLanguage) {
-    if (!$scope.file || !$scope.file.content) {
-      return;
-    }
-    
-    // 保存原始内容（如果还未保存）
-    if (!$scope.originalContent) {
-      $scope.originalContent = $scope.file.content;
-    }
-    
-    // 显示加载状态
-    $scope.isTranslating = true;
-    
-    // 调用翻译API
-    Restangular.one('translation', targetLanguage).customPOST({
-      text: $scope.file.content
-    }).then(function(data) {
-      // 更新文件内容为翻译后的内容
-      $scope.file.content = data.translated;
-      $scope.currentLanguage = targetLanguage;
-      $scope.isTranslated = true;
-      $scope.isTranslating = false;
-    }, function(response) {
-      $scope.isTranslating = false;
-      var title = $translate.instant('document.view.translation_error_title');
-      var msg = $translate.instant('document.view.translation_error_message');
-      var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
-      $dialog.messageBox(title, msg, btns);
-    });
-  };
-  
-  /**
-   * 恢复原始文件内容
-   */
-  $scope.restoreOriginal = function() {
-    if ($scope.originalContent) {
-      $scope.file.content = $scope.originalContent;
-      $scope.isTranslated = false;
-      $scope.currentLanguage = null;
-    }
-  };
-
-  
 });
