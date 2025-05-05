@@ -134,7 +134,7 @@
           <version>3.4.1</version>
       </plugin>
 
-      <!-- <plugin>
+      <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.9</version>
@@ -151,15 +151,15 @@
               <goal>report</goal>
             </goals>
           </execution>
-          <execution>
+          <!-- <execution>
             <id>aggregate</id>
             <phase>verify</phase>
             <goals>
               <goal>report-aggregate</goal>
             </goals>
-          </execution>
+          </execution> -->
         </executions>
-      </plugin> -->
+      </plugin>
 
 
       <plugin>
