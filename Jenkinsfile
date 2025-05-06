@@ -77,20 +77,18 @@ pipeline {
         }
 
         // 运行 Docker 容器
-        stage('Run Docker Container') {
+        stage('Run Docker Containers') {
             steps {
                 script {
-                    // 如果容器已存在，则停止并删除
-                    sh 'docker stop teedy || true'
-                    sh 'docker rm teedy || true'
-
-                    // 运行容器
-                    docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").run(
-                        '--name teedy -d -p 8081:8080'
-                    )
-
-                    // 可选：列出所有运行的容器
-                    sh 'docker ps --filter "name=teedy"'
+                    // 运行三个容器，分别映射到端口 8082、8083 和 8084
+                    [8082, 8083, 8084].each { port ->
+                        def containerName = "teedy-${port}"
+                        sh "docker stop ${containerName} || true"
+                        sh "docker rm ${containerName} || true"
+                        docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").run(
+                            "--name ${containerName} -d -p ${port}:8080"
+                        )
+                    }
                 }
             }
         }
