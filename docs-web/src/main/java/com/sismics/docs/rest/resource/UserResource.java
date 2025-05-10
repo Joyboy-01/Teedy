@@ -122,6 +122,127 @@ public class UserResource extends BaseResource {
     }
 
     /**
+     * 游客提交注册请求
+     */
+    @POST
+    @Path("register_request")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response registerRequest(
+        @FormParam("username") String username,
+        @FormParam("password") String password,
+        @FormParam("email") String email
+    ) {
+        // 校验
+        username = ValidationUtil.validateLength(username, "username", 3, 50);
+        ValidationUtil.validateUsername(username, "username");
+        password = ValidationUtil.validateLength(password, "password", 8, 50);
+        email = ValidationUtil.validateLength(email, "email", 1, 100);
+        ValidationUtil.validateEmail(email, "email");
+
+        // 检查用户名是否已存在
+        UserDao userDao = new UserDao();
+        if (userDao.getActiveByUsername(username) != null) {
+            throw new ClientException("AlreadyExistingUsername", "Login already used");
+        }
+
+        // 保存注册请求
+        UserRegistrationRequest req = new UserRegistrationRequest();
+        req.setUsername(username);
+        req.setPassword(password);
+        req.setEmail(email);
+
+        UserRegistrationRequestDao reqDao = new UserRegistrationRequestDao();
+        try {
+            reqDao.create(req);
+        } catch (Exception e) {
+            throw new ClientException("AlreadyRequested", "Already requested");
+        }
+
+        return Response.ok().entity(Json.createObjectBuilder().add("status", "ok").build()).build();
+    }
+
+    /**
+     * 管理员获取所有待审核注册请求
+     */
+    @GET
+    @Path("register_request")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listRegisterRequests() {
+        if (!authenticate()) throw new ForbiddenClientException();
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        UserRegistrationRequestDao reqDao = new UserRegistrationRequestDao();
+        List<UserRegistrationRequest> list = reqDao.findAllPending();
+        jakarta.json.JsonArrayBuilder arr = Json.createArrayBuilder();
+        for (UserRegistrationRequest req : list) {
+            arr.add(Json.createObjectBuilder()
+                .add("id", req.getId())
+                .add("username", req.getUsername())
+                .add("email", req.getEmail())
+                .add("create_date", req.getCreateDate().getTime())
+            );
+        }
+        return Response.ok().entity(Json.createObjectBuilder().add("requests", arr).build()).build();
+    }
+
+    /**
+     * 管理员接受注册请求
+     */
+    @POST
+    @Path("register_request/{id}/accept")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response acceptRegisterRequest(@PathParam("id") String id) {
+        if (!authenticate()) throw new ForbiddenClientException();
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        UserRegistrationRequestDao reqDao = new UserRegistrationRequestDao();
+        UserRegistrationRequest req = reqDao.getById(id);
+        if (req == null || !"pending".equals(req.getStatus())) {
+            throw new ClientException("NotFound", "Request not found");
+        }
+
+        // 创建正式用户
+        UserDao userDao = new UserDao();
+        User user = new User();
+        user.setRoleId(Constants.DEFAULT_USER_ROLE);
+        user.setUsername(req.getUsername());
+        user.setPassword(req.getPassword());
+        user.setEmail(req.getEmail());
+        user.setStorageQuota(100 * 1024 * 1024L); // 默认100MB
+        user.setOnboarding(true);
+        try {
+            userDao.create(user, principal.getId());
+        } catch (Exception e) {
+            throw new ClientException("AlreadyExistingUsername", "Login already used", e);
+        }
+
+        req.setStatus("accepted");
+        reqDao.update(req);
+
+        return Response.ok().entity(Json.createObjectBuilder().add("status", "ok").build()).build();
+    }
+
+    /**
+     * 管理员拒绝注册请求
+     */
+    @POST
+    @Path("register_request/{id}/reject")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response rejectRegisterRequest(@PathParam("id") String id) {
+        if (!authenticate()) throw new ForbiddenClientException();
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        UserRegistrationRequestDao reqDao = new UserRegistrationRequestDao();
+        UserRegistrationRequest req = reqDao.getById(id);
+        if (req == null || !"pending".equals(req.getStatus())) {
+            throw new ClientException("NotFound", "Request not found");
+        }
+        req.setStatus("rejected");
+
+        return Response.ok().entity(Json.createObjectBuilder().add("status", "ok").build()).build();
+    }
+
+    /**
      * Updates the current user informations.
      *
      * @api {post} /user Update the current user

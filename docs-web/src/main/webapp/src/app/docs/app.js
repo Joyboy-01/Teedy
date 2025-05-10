@@ -136,6 +136,15 @@ angular.module('docs',
         }
       }
     })
+    .state('settings.requests', {
+      url: '/requests',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.requests.html',
+          controller: 'SettingsRequests'
+        }
+      }
+    })
     .state('settings.inbox', {
       url: '/inbox',
       views: {

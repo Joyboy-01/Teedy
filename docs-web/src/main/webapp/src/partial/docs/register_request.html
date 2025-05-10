@@ -1,0 +1,24 @@
+<form name="registerForm">
+  <div class="modal-header">
+    <h3>{{ 'register_request.title' | translate }}</h3>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>{{ 'register_request.username' | translate }}</label>
+      <input type="text" class="form-control" ng-model="register.username" required ng-minlength="3" ng-maxlength="50" />
+    </div>
+    <div class="form-group">
+      <label>{{ 'register_request.password' | translate }}</label>
+      <input type="password" class="form-control" ng-model="register.password" required ng-minlength="8" ng-maxlength="50" />
+    </div>
+    <div class="form-group">
+      <label>{{ 'register_request.email' | translate }}</label>
+      <input type="email" class="form-control" ng-model="register.email" required />
+    </div>
+    <div class="alert alert-info" ng-if="registerStatus">{{ registerStatus }}</div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="submit()" ng-disabled="!registerForm.$valid">{{ 'register_request.submit' | translate }}</button>
+    <button class="btn btn-default" ng-click="close()">{{ 'cancel' | translate }}</button>
+  </div>
+</form>

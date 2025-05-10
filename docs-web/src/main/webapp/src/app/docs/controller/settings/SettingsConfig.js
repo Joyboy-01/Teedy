@@ -3,7 +3,7 @@
 /**
  * Settings config page controller.
  */
-angular.module('docs').controller('SettingsConfig', function($scope, $rootScope, Restangular) {
+angular.module('docs').controller('SettingsConfig', function($scope, $rootScope, Restangular, $dialog, $translate) {
   // Get the app configuration
   Restangular.one('app').get().then(function (data) {
     $rootScope.app = data;
@@ -115,6 +115,26 @@ angular.module('docs').controller('SettingsConfig', function($scope, $rootScope,
   $scope.deleteWebhook = function (webhook) {
     Restangular.one('webhook', webhook.id).remove().then(function () {
       $scope.loadWebhooks();
+    });
+  };
+
+  // 注册请求管理
+  $scope.loadRegisterRequests = function() {
+    Restangular.one('user/register_request').get().then(function(data) {
+      $scope.registerRequests = data.requests;
+    });
+  };
+  $scope.loadRegisterRequests();
+
+  $scope.acceptRegisterRequest = function(req) {
+    Restangular.one('user/register_request/' + req.id + '/accept').post().then(function() {
+      $scope.loadRegisterRequests();
+    });
+  };
+  $scope.rejectRegisterRequest = function(req) {
+    var reason = prompt($translate.instant('register_request.reject_reason'));
+    Restangular.one('user/register_request/' + req.id + '/reject').post({reason: reason}).then(function() {
+      $scope.loadRegisterRequests();
     });
   };
 });

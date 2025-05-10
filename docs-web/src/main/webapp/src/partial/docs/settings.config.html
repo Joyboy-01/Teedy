@@ -208,3 +208,25 @@
     </tr>
   </table>
 </div>
+
+<div ng-if="isAdmin">
+  <h2>注册请求管理</h2>
+  <table class="table" ng-if="registerRequests.length > 0">
+    <tr>
+      <th>用户名</th>
+      <th>邮箱</th>
+      <th>申请时间</th>
+      <th>操作</th>
+    </tr>
+    <tr ng-repeat="req in registerRequests">
+      <td>{{ req.username }}</td>
+      <td>{{ req.email }}</td>
+      <td>{{ req.create_date | date:'yyyy-MM-dd HH:mm' }}</td>
+      <td>
+        <button class="btn btn-success btn-xs" ng-click="acceptRegisterRequest(req)">接受</button>
+        <button class="btn btn-danger btn-xs" ng-click="rejectRegisterRequest(req)">拒绝</button>
+      </td>
+    </tr>
+  </table>
+  <div ng-if="registerRequests.length == 0" class="text-muted">暂无待审核注册请求</div>
+</div>

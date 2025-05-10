@@ -1,0 +1,33 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">注册请求用户列表</h3>
+  </div>
+  <div class="panel-body" ng-if="requests.length === 0">
+    暂无注册请求
+  </div>
+  <table class="table" ng-if="requests.length > 0">
+    <thead>
+      <tr>
+        <th>用户名</th>
+        <th>邮箱</th>
+        <th>申请时间</th>
+        <th>状态</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="req in requests">
+        <td>{{ req.username }}</td>
+        <td>{{ req.email }}</td>
+        <td>{{ req.createDate | date:'yyyy-MM-dd HH:mm' }}</td>
+        <td>{{ req.status }}</td>
+        <td>
+          <button class="btn btn-success btn-xs"
+                  ng-click="approveRequest(req)">
+            同意
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
