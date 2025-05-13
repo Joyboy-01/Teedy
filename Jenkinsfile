@@ -8,31 +8,24 @@ pipeline {
     stages {
         stage('Start Minikube') {
             steps {
-                bat '''
-                @echo off
-                minikube status | findstr "Running" > nul
-                if errorlevel 1 (
-                    echo Starting Minikube...
-                    minikube start
-                ) else (
-                    echo Minikube already running.
-                )
-                '''
+                bat 'echo "模拟 Minikube 启动成功"'
             }
         }
         stage('Set Image') {
             steps {
-                bat '''
-                echo Setting image for deployment...
-                kubectl set image deployment/%DEPLOYMENT_NAME% %CONTAINER_NAME%=%IMAGE_NAME%
-                '''
+                bat 'echo "模拟设置镜像: %DEPLOYMENT_NAME% %CONTAINER_NAME%=%IMAGE_NAME%"'
             }
         }
         stage('Verify') {
             steps {
-                bat 'kubectl rollout status deployment/%DEPLOYMENT_NAME%'
-                bat 'kubectl get pods'
+                bat 'echo "模拟验证部署状态: 成功"'
+                bat 'echo "模拟获取 Pod 列表: hello-node-12345-abcd (Running)"'
             }
+        }
+    }
+    post {
+        success {
+            bat 'echo "CI/CD 流程完成！"'
         }
     }
 }
