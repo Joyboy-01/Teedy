@@ -8,24 +8,24 @@ pipeline {
     stages {
         stage('Start Minikube') {
             steps {
-                bat 'echo "模拟 Minikube 启动成功"'
+                sh 'echo "模拟 Minikube 启动成功"'
             }
         }
         stage('Set Image') {
             steps {
-                bat 'echo "模拟设置镜像: %DEPLOYMENT_NAME% %CONTAINER_NAME%=%IMAGE_NAME%"'
+                sh 'echo "模拟设置镜像: ${DEPLOYMENT_NAME} ${CONTAINER_NAME}=${IMAGE_NAME}"'
             }
         }
         stage('Verify') {
             steps {
-                bat 'echo "模拟验证部署状态: 成功"'
-                bat 'echo "模拟获取 Pod 列表: hello-node-12345-abcd (Running)"'
+                sh 'echo "模拟验证部署状态: 成功"'
+                sh 'echo "模拟获取 Pod 列表: hello-node-12345-abcd (Running)"'
             }
         }
     }
     post {
         success {
-            bat 'echo "CI/CD 流程完成！"'
+            sh 'echo "CI/CD 流程完成！"'
         }
     }
 }
