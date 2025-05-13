@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        DEPLOYMENT_NAME = "your-deployment"
-        CONTAINER_NAME = "your-container"
-        IMAGE_NAME = "your-dockerhub-id/your-image:version"
+        DEPLOYMENT_NAME = "hello-node"
+        CONTAINER_NAME = "docs"
+        IMAGE_NAME = "shuoer001/teedy:${env.BUILD_NUMBER}"
     }
     stages {
         stage('Start Minikube') {
