@@ -8,28 +8,30 @@ pipeline {
     stages {
         stage('Start Minikube') {
             steps {
-                sh '''
-                if ! minikube status | grep -q "Running"; then
-                    echo "Starting Minikube..."
+                bat '''
+                @echo off
+                minikube status | findstr "Running" > nul
+                if errorlevel 1 (
+                    echo Starting Minikube...
                     minikube start
-                else
-                    echo "Minikube already running."
-                fi
+                ) else (
+                    echo Minikube already running.
+                )
                 '''
             }
         }
         stage('Set Image') {
             steps {
-                sh '''
-                echo "Setting image for deployment..."
-                kubectl set image deployment/${DEPLOYMENT_NAME} ${CONTAINER_NAME}=${IMAGE_NAME}
+                bat '''
+                echo Setting image for deployment...
+                kubectl set image deployment/%DEPLOYMENT_NAME% %CONTAINER_NAME%=%IMAGE_NAME%
                 '''
             }
         }
         stage('Verify') {
             steps {
-                sh 'kubectl rollout status deployment/${DEPLOYMENT_NAME}'
-                sh 'kubectl get pods'
+                bat 'kubectl rollout status deployment/%DEPLOYMENT_NAME%'
+                bat 'kubectl get pods'
             }
         }
     }
